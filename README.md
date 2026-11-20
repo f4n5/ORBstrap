@@ -4,7 +4,6 @@ Roblox PC bootstrapper inspired by **Fishstrap / Bloxstrap**, connected to the *
 (`https://orboficialweb.apps.bot-hosting.cloud`).
 
 **Powered by RoValra** → https://www.rovalra.com
-(Please keep this attribution — required by RoValra API Terms of Use.)
 
 ---
 
