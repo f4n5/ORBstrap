@@ -48,12 +48,6 @@ sus reglas de integridad.
 
 La app habla con la API del bot (`/api/app/*`). Ver el README del bot para variables y endpoints.
 
-## Build (Windows, .NET 8 SDK)
-
-```
-dotnet publish ORBstrap.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o publish
-```
-
-(el ejecutable resultante es `publish\ORBstrap.exe`)
+## Instalador y desinstalador
 
 Argumentos: `--portable` (omite el instalador), `--uninstall` (modo desinstalación).
