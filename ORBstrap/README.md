@@ -4,7 +4,6 @@ Roblox PC bootstrapper inspired by **Fishstrap / Bloxstrap**, connected to the *
 (`https://orb-official-bot.onrender.com`).
 
 **Powered by RoValra** → https://www.rovalra.com
-(Please keep this attribution — required by RoValra API Terms of Use.)
 
 ---
 
