@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ORBstrap — Roblox Bootstrapper</title>
+  <meta name="description" content="ORBstrap es un bootstrapper de Roblox para PC inspirado en Fishstrap y Bloxstrap, conectado al bot oficial ORB. Login con Discord, texturas personalizadas, FastFlags y más." />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0F0F12;
+      --bg-card: #16161a;
+      --bg-elevated: #1c1c22;
+      --border: #2a2a35;
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --accent: #7C3AED;
+      --accent-hover: #8B5CF6;
+      --accent-soft: rgba(124, 58, 237, 0.15);
+      --success: #22c55e;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+      --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a { color: var(--accent-hover); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15,15,18,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-links a:hover {
+      background: var(--bg-elevated);
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem 3rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr; text-align: center; padding-top: 2.5rem; }
+      .hero-visual { order: -1; }
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .hero h1 span { color: var(--accent-hover); }
+    .hero-lead {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 1.75rem;
+      max-width: 36ch;
+    }
+    @media (max-width: 800px) { .hero-lead { margin-left: auto; margin-right: auto; } }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    @media (max-width: 800px) { .hero-actions { justify-content: center; } }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.35rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      text-decoration: none;
+      font-family: inherit;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--accent-hover); text-decoration: none; color: white; }
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: #25252e; text-decoration: none; color: var(--text); }
+
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .icon-showcase {
+      position: relative;
+      width: 220px;
+      height: 220px;
+    }
+    .icon-showcase img {
+      width: 100%;
+      height: 100%;
+      border-radius: 40px;
+      box-shadow: var(--shadow), 0 0 60px rgba(124, 58, 237, 0.35);
+    }
+    .icon-glow {
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Sections */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem;
+    }
+    .section-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .section-sub {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 50ch;
+    }
+
+    /* Features grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.4rem;
+      transition: border-color 0.15s;
+    }
+    .feature-card:hover { border-color: #3f3f4a; }
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--accent-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 0.85rem;
+    }
+    .feature-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.15);
+      color: var(--success);
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+    .badge.pending {
+      background: rgba(234,179,8,0.15);
+      color: #eab308;
+    }
+
+    /* How it looks - mock UI */
+    .mock-window {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .mock-titlebar {
+      background: #1a1a1e;
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .mock-dots { display: flex; gap: 6px; margin-right: 0.75rem; }
+    .mock-dots span {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .mock-dots span:nth-child(1) { background: #ef4444; }
+    .mock-dots span:nth-child(2) { background: #eab308; }
+    .mock-dots span:nth-child(3) { background: #22c55e; }
+    .mock-body {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      min-height: 320px;
+    }
+    @media (max-width: 600px) {
+      .mock-body { grid-template-columns: 1fr; }
+      .mock-sidebar { display: none; }
+    }
+    .mock-sidebar {
+      background: #121216;
+      border-right: 1px solid var(--border);
+      padding: 1rem 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .mock-nav-item {
+      padding: 0.55rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: default;
+    }
+    .mock-nav-item.active {
+      background: #2A2A35;
+      color: white;
+      font-weight: 500;
+    }
+    .mock-content {
+      padding: 1.5rem 1.75rem;
+    }
+    .mock-content h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.35rem;
+    }
+    .mock-content .muted { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+    .mock-launch {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .mock-btn {
+      background: var(--accent);
+      color: white;
+      padding: 0.55rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+    }
+    .mock-checks {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .mock-checks label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .mock-checks input { accent-color: var(--accent); }
+
+    /* How it works steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      counter-reset: step;
+    }
+    .step {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      position: relative;
+    }
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      top: -12px;
+      left: 1.2rem;
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .step h3 {
+      margin-top: 0.5rem;
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+    }
+    .step p { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 0.65rem; }
+    details.faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    details.faq-item[open] { border-color: #3f3f4a; }
+    summary {
+      padding: 1rem 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: '+';
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      transition: transform 0.2s;
+    }
+    details[open] summary::after { content: '−'; }
+    .faq-body {
+      padding: 0 1.2rem 1.15rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Community Questions */
+    .community-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      max-width: 640px;
+    }
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: var(--text-muted);
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 0.9rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .form-group textarea { min-height: 110px; resize: vertical; }
+    .form-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+    }
+    .form-success {
+      display: none;
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.35);
+      color: #86efac;
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-sm);
+      margin-top: 1rem;
+    }
+    .form-success.visible { display: block; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--text-muted); }
+    footer a:hover { color: var(--accent-hover); }
+
+    .attribution {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="#">
+        <img src="icon.png" alt="ORBstrap" width="32" height="32" />
+        ORBstrap
+      </a>
+      <div class="nav-links">
+        <a href="#features">Funciones</a>
+        <a href="#look">Aspecto</a>
+        <a href="#how">Cómo funciona</a>
+        <a href="#faq">FAQ</a>
+        <a href="#community">Comunidad</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-text">
+      <h1>Bootstrapper de Roblox<br />conectado a <span>ORB</span></h1>
+      <p class="hero-lead">
+        ORBstrap es un bootstrapper para PC inspirado en Fishstrap y Bloxstrap.
+        Login con Discord, texturas personalizadas, FastFlags, multi-instancia y más —
+        todo enlazado al bot oficial ORB.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#how">Cómo empezar</a>
+        <a class="btn btn-secondary" href="#features">Ver funciones</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="icon-showcase">
+        <div class="icon-glow"></div>
+        <img src="icon.png" alt="Icono de ORBstrap" width="220" height="220" />
+      </div>
+    </div>
+  </header>
+
+  <section id="features">
+    <h2 class="section-title">Qué hace ORBstrap</h2>
+    <p class="section-sub">
+      Todas las herramientas que necesitas para lanzar y personalizar Roblox desde un solo lugar, con verificación por el bot ORB.
+    </p>
+    <div class="features">
+      <article class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h3>Login Discord + bot ORB <span class="badge">Listo</span></h3>
+        <p>Acceso solo si estás en el servidor de Discord y te verificaste con el bot oficial. Mensaje de bienvenida al entrar.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Instalador / desinstalador <span class="badge">Listo</span></h3>
+        <p>Instalación por usuario (sin admin). Aparece en Configuración → Aplicaciones. Desinstalación desde la propia app.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Custom textures <span class="badge">Listo</span></h3>
+        <p>Importa packs .zip o archivos a <code>content\...</code>. Restaura originales cuando quieras. Solo toca archivos de content.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">🚩</div>
+        <h3>FastFlags <span class="badge">Listo</span></h3>
+        <p>Guarda y escribe flags en <code>ClientAppSettings.json</code> para ajustar el cliente de Roblox.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">🪟</div>
+        <h3>Multi-instance <span class="badge">Listo</span></h3>
+        <p>Lanza varias instancias de Roblox a la vez. Opción de confirmar antes de abrir otra.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">📢</div>
+        <h3>Show in Discord <span class="badge">Listo</span></h3>
+        <p>El bot publica que estás jugando Roblox. (La detección del juego concreto aún no está completa.)</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h3>Server region &amp; uptime <span class="badge pending">Parcial</span></h3>
+        <p>Servicio RoValra listo para región y uptime de servidores. Panel de actividad pendiente.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">🧹</div>
+        <h3>Cleaner &amp; temas <span class="badge pending">UI</span></h3>
+        <p>Limpieza de caché/logs y opciones de apariencia: interfaz lista, lógica pendiente en algunos puntos.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="look">
+    <h2 class="section-title">Cómo se ve</h2>
+    <p class="section-sub">
+      Interfaz oscura moderna, barra lateral de navegación y acento púrpura. Ventana principal ~960×640.
+    </p>
+    <div class="mock-window" aria-label="Vista previa de la interfaz de ORBstrap">
+      <div class="mock-titlebar">
+        <div class="mock-dots"><span></span><span></span><span></span></div>
+        ORBstrap — Roblox Bootstrapper
+      </div>
+      <div class="mock-body">
+        <aside class="mock-sidebar">
+          <div class="mock-nav-item active">Home / Launch</div>
+          <div class="mock-nav-item">FastFlags</div>
+          <div class="mock-nav-item">Textures</div>
+          <div class="mock-nav-item">Activity &amp; Servers</div>
+          <div class="mock-nav-item">Discord</div>
+          <div class="mock-nav-item">Cleaner</div>
+          <div class="mock-nav-item">Behaviour</div>
+          <div class="mock-nav-item">Appearance</div>
+          <div class="mock-nav-item">About</div>
+        </aside>
+        <div class="mock-content">
+          <h2>¡Bienvenido!</h2>
+          <p class="muted">Ready to launch</p>
+          <div class="mock-launch">
+            <button class="mock-btn" type="button">Launch Roblox</button>
+          </div>
+          <div class="mock-checks">
+            <label><input type="checkbox" checked disabled /> Multi-instance support</label>
+            <label><input type="checkbox" checked disabled /> Background updates</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:1.25rem; color:var(--text-muted); font-size:0.9rem;">
+      Secciones: Home, FastFlags, Textures, Activity &amp; Servers, Discord, Cleaner, Behaviour, Appearance y About.
+    </p>
+  </section>
+
+  <section id="how">
+    <h2 class="section-title">Cómo funciona</h2>
+    <p class="section-sub">Tres pasos claros desde que abres el .exe hasta que lanzas Roblox.</p>
+    <div class="steps">
+      <div class="step">
+        <h3>Instalación</h3>
+        <p>
+          Al abrir <strong>ORBstrap.exe</strong> por primera vez aparece el panel de configuración e instalación
+          (carpeta, accesos directos). También puedes “Run without installing”. Instalación por usuario, sin administrador.
+          Se desinstala desde About → Uninstall ORBstrap…
+        </p>
+      </div>
+      <div class="step">
+        <h3>Acceso</h3>
+        <p>
+          Debes estar en el servidor de Discord, verificarte con el bot ORB e iniciar sesión.
+          Cuando el bot te verifica, la app muestra «¡Bienvenido, usuario!» y desbloquea todas las funciones.
+        </p>
+      </div>
+      <div class="step">
+        <h3>Uso diario</h3>
+        <p>
+          Lanza Roblox desde Home, aplica texturas personalizadas, ajusta FastFlags, multi-instancia y
+          “Show in Discord”. Datos en <code>%LocalAppData%\ORBstrap</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2 class="section-title">FAQ</h2>
+    <p class="section-sub">Preguntas frecuentes sobre ORBstrap.</p>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>¿Qué es ORBstrap?</summary>
+        <div class="faq-body">
+          Es un bootstrapper de Roblox para Windows inspirado en Fishstrap y Bloxstrap, conectado al bot oficial ORB
+          (<code>https://orb-official-bot.onrender.com</code>). Permite login con Discord, texturas custom, FastFlags, multi-instancia e instalador integrado.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Necesito permisos de administrador?</summary>
+        <div class="faq-body">
+          No. La instalación es por usuario (carpeta en LocalAppData). No requiere elevación. Aparece en Configuración → Aplicaciones de Windows.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Cómo se desinstala?</summary>
+        <div class="faq-body">
+          Desde la propia app: ve a <strong>About</strong> y elige <strong>Uninstall ORBstrap…</strong>.
+          También se puede usar el argumento <code>--uninstall</code>.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Cómo funcionan las texturas personalizadas?</summary>
+        <div class="faq-body">
+          Importa un <code>.zip</code> (o copia archivos) con la misma estructura que Roblox:
+          <code>content\textures\...</code>, <code>content\sounds\</code>, <code>content\fonts\</code>, etc.
+          Se aplican al lanzar desde ORBstrap. Solo se modifican archivos dentro de <code>content</code>.
+          “Restore originals” recupera los archivos originales de Roblox. Úsalo bajo tu responsabilidad.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Por qué tengo que usar Discord / el bot ORB?</summary>
+        <div class="faq-body">
+          El acceso a la app está ligado a la verificación en el servidor de Discord mediante el bot oficial ORB.
+          Así se controla quién puede usar el bootstrapper y se habilitan funciones como “Show in Discord”.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Dónde se guardan los datos?</summary>
+        <div class="faq-body">
+          En <code>%LocalAppData%\ORBstrap</code> (ajustes, logs, sesión, mods/texturas).
+          La instalación por defecto va a <code>%LocalAppData%\Programs\ORBstrap</code>.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Qué es RoValra?</summary>
+        <div class="faq-body">
+          ORBstrap usa la API de <a href="https://www.rovalra.com" target="_blank" rel="noopener">RoValra</a>
+          para información de servidores (región, uptime, etc.). La atribución es requerida por los términos de uso de RoValra.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Cómo se construye desde el código?</summary>
+        <div class="faq-body">
+          Con .NET 8 SDK en Windows:<br />
+          <code style="display:block;margin-top:0.5rem;background:#1a1a1e;padding:0.75rem;border-radius:8px;font-size:0.8rem;overflow-x:auto;">
+            dotnet publish ORBstrap.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o publish
+          </code>
+          El ejecutable queda en <code>publish\ORBstrap.exe</code>. Argumentos: <code>--portable</code>, <code>--uninstall</code>.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section id="community">
+    <h2 class="section-title">Community Questions</h2>
+    <p class="section-sub">
+      ¿Tienes una duda que no está en el FAQ? Déjala aquí. (En esta demo el formulario es local;
+      en un despliegue real podrías enviarlo a un backend o a Discord.)
+    </p>
+    <div class="community-box">
+      <form id="question-form" onsubmit="return handleQuestion(event)">
+        <div class="form-group">
+          <label for="q-name">Nombre o usuario (opcional)</label>
+          <input type="text" id="q-name" name="name" placeholder="Ej. Player123" autocomplete="nickname" />
+        </div>
+        <div class="form-group">
+          <label for="q-email">Contacto (opcional, email o Discord)</label>
+          <input type="text" id="q-email" name="contact" placeholder="usuario#0000 o email" />
+        </div>
+        <div class="form-group">
+          <label for="q-text">Tu pregunta *</label>
+          <textarea id="q-text" name="question" required placeholder="Escribe tu pregunta sobre ORBstrap..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar pregunta</button>
+        <p class="form-note">
+          Las preguntas se guardan solo en tu navegador en esta demo. Para soporte real, únete al servidor de Discord de ORB y pregunta allí.
+        </p>
+        <div id="form-success" class="form-success" role="status">
+          ✓ Pregunta registrada localmente. Gracias. Revisa también el Discord de la comunidad para respuestas más rápidas.
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      <strong>ORBstrap</strong> v1.1.0 · Publisher: ORB ·
+      Backend: <a href="https://orb-official-bot.onrender.com" target="_blank" rel="noopener">orb-official-bot.onrender.com</a>
+    </p>
+    <p class="attribution">
+      Powered by <a href="https://www.rovalra.com" target="_blank" rel="noopener">RoValra</a>
+      (atribución requerida por los términos de uso de la API).
+    </p>
+    <p style="margin-top:0.75rem;">Inspirado en Fishstrap / Bloxstrap. Página de demostración generada a partir del código fuente.</p>
+  </footer>
+
+  <script>
+    function handleQuestion(e) {
+      e.preventDefault();
+      const text = document.getElementById('q-text').value.trim();
+      if (!text) return false;
+      const entry = {
+        name: document.getElementById('q-name').value.trim() || 'Anónimo',
+        contact: document.getElementById('q-email').value.trim() || '',
+        question: text,
+        at: new Date().toISOString()
+      };
+      try {
+        const key = 'orbstrap_community_questions';
+        const list = JSON.parse(localStorage.getItem(key) || '[]');
+        list.push(entry);
+        localStorage.setItem(key, JSON.stringify(list));
+      } catch (_) {}
+      document.getElementById('form-success').classList.add('visible');
+      e.target.reset();
+      return false;
+    }
+  </script>
+</body>
+</html>
