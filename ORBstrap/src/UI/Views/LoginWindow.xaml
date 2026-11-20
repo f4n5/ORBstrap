@@ -1,0 +1,86 @@
+<Window x:Class="Crypt3d.UI.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ORBstrap — Sign in"
+        Icon="pack://application:,,,/Resources/icon.ico"
+        Width="500" Height="560"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="#0F0F12"
+        Foreground="#F3F4F6"
+        FontFamily="Segoe UI">
+
+    <Grid Margin="32,28,32,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,18">
+            <TextBlock Text="ORBstrap" FontSize="30" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="Roblox Bootstrapper · ORB official bot" Foreground="#9CA3AF" Margin="0,2,0,0"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+
+            <!-- Conectando / comprobando sesión -->
+            <StackPanel x:Name="PanelChecking" VerticalAlignment="Center">
+                <TextBlock x:Name="TxtCheckingTitle" Text="Connecting to the ORB server…" FontSize="18" FontWeight="SemiBold"
+                           TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <TextBlock x:Name="TxtCheckingHint" Foreground="#9CA3AF" TextWrapping="Wrap" Margin="0,0,0,18"
+                           Text="The first connection can take up to a minute while the server wakes up."/>
+                <ProgressBar IsIndeterminate="True" Height="6" Foreground="#7C3AED" Background="#25252B" BorderThickness="0"/>
+            </StackPanel>
+
+            <!-- Iniciar sesión -->
+            <StackPanel x:Name="PanelLogin" Visibility="Collapsed" VerticalAlignment="Center">
+                <TextBlock Text="Sign in to continue" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                <TextBlock Text="To use ORBstrap you must be in our Discord server and verified by the ORB bot."
+                           Foreground="#9CA3AF" TextWrapping="Wrap" Margin="0,0,0,16"/>
+
+                <Border Background="#1C1C22" CornerRadius="12" Padding="18" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="1.  Join the Discord server" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <Button x:Name="BtnJoin" Content="Join the Discord server" Style="{StaticResource SecondaryBtn}"
+                                HorizontalAlignment="Left" Visibility="Collapsed" Margin="0,0,0,14" Click="Join_Click"/>
+                        <TextBlock Text="2.  Press “Verify” in the server (the bot gives you the Member role)" FontWeight="SemiBold"
+                                   TextWrapping="Wrap" Margin="0,0,0,14"/>
+                        <TextBlock Text="3.  Sign in with Discord" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <Button x:Name="BtnSignIn" Content="Sign in with Discord" Style="{StaticResource PrimaryBtn}"
+                                HorizontalAlignment="Left" Click="SignIn_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock x:Name="TxtLoginError" Foreground="#F87171" TextWrapping="Wrap" Visibility="Collapsed"/>
+            </StackPanel>
+
+            <!-- Sin conexión -->
+            <StackPanel x:Name="PanelOffline" Visibility="Collapsed" VerticalAlignment="Center">
+                <TextBlock Text="Can't connect" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                <TextBlock x:Name="TxtOfflineMessage" Foreground="#F87171" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                <Button Content="Try again" Style="{StaticResource PrimaryBtn}" HorizontalAlignment="Left" Click="Retry_Click"/>
+            </StackPanel>
+
+            <!-- Esperando al navegador -->
+            <StackPanel x:Name="PanelWaiting" Visibility="Collapsed" VerticalAlignment="Center">
+                <TextBlock Text="Waiting for Discord…" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                <TextBlock Text="Finish signing in in your browser. This window will continue automatically."
+                           Foreground="#9CA3AF" TextWrapping="Wrap" Margin="0,0,0,18"/>
+                <ProgressBar IsIndeterminate="True" Height="6" Foreground="#7C3AED" Background="#25252B"
+                             BorderThickness="0" Margin="0,0,0,18"/>
+                <Button Content="Cancel" Style="{StaticResource SecondaryBtn}" HorizontalAlignment="Left" Click="CancelWait_Click"/>
+            </StackPanel>
+
+            <!-- Bienvenida -->
+            <StackPanel x:Name="PanelWelcome" Visibility="Collapsed" VerticalAlignment="Center">
+                <TextBlock x:Name="TxtWelcome" Text="¡Bienvenido!" FontSize="28" FontWeight="Bold" Foreground="#A78BFA"
+                           TextWrapping="Wrap" Margin="0,0,0,8"/>
+                <TextBlock Text="Cuenta verificada. Abriendo ORBstrap…" Foreground="#9CA3AF"/>
+            </StackPanel>
+        </Grid>
+
+        <Button Grid.Row="2" Content="Quit" Style="{StaticResource SecondaryBtn}" HorizontalAlignment="Left"
+                Click="Quit_Click"/>
+    </Grid>
+</Window>
