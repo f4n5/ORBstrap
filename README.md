@@ -3,7 +3,7 @@
 Roblox PC bootstrapper inspired by **Fishstrap / Bloxstrap**, connected to the **ORB official bot**
 (`https://orboficialweb.apps.bot-hosting.cloud`).
 
-#colaborador: Cryp3d
+# colaborador: Cryp3d
 
 © 2026 [ORB]. Todos los derechos reservados. Este código se publica únicamente con fines de comercialización con sus respectivas licencias.
 
