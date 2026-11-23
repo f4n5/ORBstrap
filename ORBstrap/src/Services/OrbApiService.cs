@@ -125,6 +125,14 @@ namespace Crypt3d.Services
             => SendAsync(HttpMethod.Post, "/api/app/show", token,
                 new { action = start ? "start" : "stop", showName }, ct);
 
+        /// <summary>
+        /// Actualiza el mensaje de "Show in Discord" con el juego actual (gameName/placeId a null = sin juego).
+        /// Requiere que el bot acepte action "update" en /api/app/show.
+        /// </summary>
+        public Task<OrbReply> ShowGameAsync(string token, bool showName, string? gameName, long? placeId, CancellationToken ct = default)
+            => SendAsync(HttpMethod.Post, "/api/app/show", token,
+                new { action = "update", showName, gameName, placeId }, ct);
+
         public void Dispose() => _http.Dispose();
     }
 

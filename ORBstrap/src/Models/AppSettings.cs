@@ -26,6 +26,13 @@ namespace Crypt3d.Models
         public bool ShowServerUptime { get; set; } = true;
         public bool DiscordShowAccount { get; set; } = false;
         public bool DiscordAllowJoin { get; set; } = false;
+        // Además del nombre, enviar al bot el juego en el que estás. Opt-in (privacidad).
+        public bool DiscordShowGame { get; set; } = false;
+
+        // Games: mostrar el juego actual / recientes y "Join best server"
+        public bool ShowGames { get; set; } = true;
+        public string BestServerMode { get; set; } = "ping"; // ping | players | balanced
+        public List<RecentGame> RecentGames { get; set; } = new();
 
         // RoValra
         public bool UseRoValraServerInfo { get; set; } = true;

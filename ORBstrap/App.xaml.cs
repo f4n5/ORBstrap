@@ -13,6 +13,7 @@ namespace Crypt3d
         public static Logger Logger { get; private set; } = null!;
         public static RoValraService RoValra { get; private set; } = null!;
         public static OrbApiService Orb { get; private set; } = null!;
+        public static RobloxApiService RobloxApi { get; private set; } = null!;
         public static TexturesService Textures { get; private set; } = null!;
 
         /// <summary>Sesión verificada por el bot ORB (se establece tras el login).</summary>
@@ -42,6 +43,7 @@ namespace Crypt3d
 
             RoValra = new RoValraService();
             Orb = new OrbApiService();
+            RobloxApi = new RobloxApiService();
             Textures = new TexturesService();
 
             base.OnStartup(e);
@@ -138,6 +140,7 @@ namespace Crypt3d
             Settings?.Save();
             RoValra?.Dispose();
             Orb?.Dispose();
+            RobloxApi?.Dispose();
             Logger?.WriteLine("App", $"{AppInfo.Name} exiting.");
             base.OnExit(e);
         }

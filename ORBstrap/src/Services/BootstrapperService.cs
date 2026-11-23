@@ -102,12 +102,27 @@ namespace Crypt3d.Services
 
                 SetStatus("Launching Roblox...");
 
-                var args = BuildLaunchArguments(placeId, jobId);
+                // Entrar a un juego (o servidor) concreto: se abre con el protocolo de Roblox, que usa
+                // tu sesión de Roblox ya iniciada. Antes ya se aplicaron FastFlags y texturas.
+                if (!string.IsNullOrEmpty(placeId))
+                {
+                    var startedAt = DateTime.Now;
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = BuildDeepLink(placeId, jobId),
+                        UseShellExecute = true
+                    });
+
+                    LastProcess = await WaitForRobloxProcessAsync(startedAt);
+                    SetStatus(LastProcess != null
+                        ? "Roblox launched successfully."
+                        : "Roblox is opening… (ORBstrap could not track the process).");
+                    return true;
+                }
 
                 var psi = new ProcessStartInfo
                 {
                     FileName = playerPath,
-                    Arguments = args,
                     UseShellExecute = false,
                     WorkingDirectory = versionFolder
                 };
@@ -164,17 +179,43 @@ namespace Crypt3d.Services
             }
         }
 
-        private string BuildLaunchArguments(string? placeId, string? jobId)
+        /// <summary>
+        /// roblox://experiences/start?placeId=…[&amp;gameInstanceId=…]. Se validan los valores
+        /// (placeId numérico, jobId con formato GUID) porque el enlace se abre con el shell de Windows.
+        /// </summary>
+        private static string BuildDeepLink(string placeId, string? jobId)
         {
-            // Minimal launch; real bootstrapper also handles protocol (roblox-player:1+...) 
-            // and channel selection.
-            if (!string.IsNullOrEmpty(placeId) && !string.IsNullOrEmpty(jobId))
-                return $"-placeId {placeId} -gameInfo {jobId}"; // simplified
+            if (!long.TryParse(placeId, out var place) || place <= 0)
+                throw new ArgumentException("Invalid place ID.");
 
-            if (!string.IsNullOrEmpty(placeId))
-                return $"-placeId {placeId}";
+            var url = $"roblox://experiences/start?placeId={place}";
+            if (!string.IsNullOrEmpty(jobId))
+            {
+                if (!Guid.TryParse(jobId, out var job))
+                    throw new ArgumentException("Invalid server ID.");
+                url += $"&gameInstanceId={job}";
+            }
+            return url;
+        }
 
-            return string.Empty;
+        /// <summary>Espera (hasta 30 s) a que aparezca el RobloxPlayerBeta recién abierto por el protocolo.</summary>
+        private static async Task<Process?> WaitForRobloxProcessAsync(DateTime startedAt)
+        {
+            for (var i = 0; i < 60; i++)
+            {
+                var found = Process.GetProcessesByName("RobloxPlayerBeta")
+                    .Where(p =>
+                    {
+                        try { return p.StartTime >= startedAt.AddSeconds(-2); }
+                        catch { return false; }
+                    })
+                    .OrderByDescending(p => p.StartTime)
+                    .FirstOrDefault();
+
+                if (found != null) return found;
+                await Task.Delay(500);
+            }
+            return null;
         }
 
         private async Task ApplyFastFlagsAsync(string versionFolder)
